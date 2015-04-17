@@ -32,7 +32,7 @@ app.config(function(sgIso4217Provider){
 Los objetos countryCodes tienen la siguiente estructura:
 
 ```json
-"countryCode": {
+"currency": {
    "entity": "String",
    "currency": "String",
    "alphabeticCode": "String",
