@@ -1,6 +1,6 @@
 {
     "name": "sg-iso4217",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "main": "./dist/sg-iso4217.js",
     "description": "Restful factories for iso4217",
     "repository": {
