@@ -5,7 +5,7 @@
     "description": "Restful factories for iso4217",
     "repository": {
         "type": "git",
-        "url": "https://github.com/SistCoop/sg-iso4217.git"
+        "url": "https://github.com/sistcoop-restangularfiles/sg-iso4217.git"
     },
     "dependencies": {
         "lodash": ">=1.3.0 <2.5.0",
