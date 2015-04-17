@@ -29,7 +29,7 @@ app.config(function(sgIso4217Provider){
 | SGCountryCode.$removeByAlphabeticCode(alpha2Code) | Eliminar uno segun alphabeticCode |
 | SGCountryCode.$removeByNumericCode(numericCode)   | Eliminar uno segun numericCode    |
 
-Los objetos countryCodes tienen la siguiente estructura:
+Los objetos Currency tienen la siguiente estructura:
 
 ```json
 "currency": {
@@ -40,6 +40,14 @@ Los objetos countryCodes tienen la siguiente estructura:
    "minorUnit": "Integer"
 }
 
+```
+
+Los objetos Denomination tienen la siguiente estructura:
+
+```json
+"denomination": {
+    "value": "BigDecimal"
+}
 ```
 
 ### Version
