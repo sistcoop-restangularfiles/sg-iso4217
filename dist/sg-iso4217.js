@@ -117,7 +117,15 @@
             },
             $removeByNumericCode: function(id){
                 return Iso4217Restangular.one(urlNumericCode, id).remove();
+            },
+
+            $getDenominationsByAlphabeticCode: function(id){
+                return Iso4217Restangular.one(urlAlphabeticCode, id).all('denominations').getList();
+            },
+            $getDenominationsByNumericCode: function(id){
+                return Iso4217Restangular.one(urlNumericCode, id).all('denominations').getList();
             }
+
         };
 
         Iso4217Restangular.extendModel(url, function(obj) {
