@@ -108,7 +108,7 @@
 
 
     module.factory('SGCurrency', ['Iso4217Restangular',  function(Iso4217Restangular) {
-        var currencyResource = RestObject('currencies', Iso3166Restangular);
+        var currencyResource = RestObject('currencies', Iso4217Restangular);
 
         /**
          * Transacciones boveda caja*
