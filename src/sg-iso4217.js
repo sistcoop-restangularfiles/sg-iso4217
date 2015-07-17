@@ -30,119 +30,86 @@
         });
     }]);
 
+    var RestObject = function (path, restangular, extendMethods) {
+        var modelMethods = {
 
-    module.factory('Iso4217AbstractModel', ['Iso4217Restangular', function(Iso4217Restangular){
-
-        var url = '';
-
-        var modelMethos = {
-            $new: function(id){
-                return angular.extend({id: id}, modelMethos);
+            /**
+             * Retorna url*/
+            $getBasePath: function () {
+                return path;
             },
-            $build: function(){
-                return angular.extend({id: undefined}, modelMethos, {$save: function(){
-                    return Iso4217Restangular.all(url).post(this);
-                }});
+            /**
+             * Retorna la url completa del objeto*/
+            $getAbsoluteUrl: function () {
+                return restangular.one(path, this.id).getRestangularUrl();
             },
-            $save: function() {
-                return Iso4217Restangular.one(url, this.id).customPUT(Iso4217Restangular.copy(this),'',{},{});
-            },
-
-            $find: function(id){
-                return Iso4217Restangular.one(url, id).get();
-            },
-            $search: function(queryParams){
-                return Iso4217Restangular.all(url).getList(queryParams);
+            /**
+             * Concatena la url de subresource con la url base y la retorna*/
+            $concatSubResourcePath: function (subResourcePath) {
+                return this.$getBasePath() + '/' + this.id + '/' + subResourcePath;
             },
 
-            $remove: function(id){
-                return Iso4217Restangular.one(url, id).remove();
+
+            $new: function (id) {
+                return angular.extend({id: id}, modelMethods);
+            },
+            $build: function () {
+                return angular.extend({id: undefined}, modelMethods, {
+                    $save: function () {
+                        return restangular.all(path).post(this);
+                    }
+                });
+            },
+
+            $search: function (queryParams) {
+                return restangular.all(path).get(queryParams);
+            },
+
+            $find: function (id) {
+                return restangular.one(path, id).get();
+            },
+            $save: function () {
+                return restangular.one(path, this.id).customPUT(restangular.copy(this), '', {}, {});
+            },
+            $saveSent: function (obj) {
+                return restangular.all(path).post(obj);
+            },
+
+            $enable: function () {
+                return restangular.one(path, this.id).all('enable').post();
+            },
+            $disable: function () {
+                return restangular.one(path, this.id).all('disable').post();
+            },
+            $remove: function () {
+                return restangular.one(path, this.id).remove();
             }
-        }
-    }]);
+        };
+
+        modelMethods = angular.extend(modelMethods, extendMethods);
+
+        restangular.extendModel(path, function (obj) {
+            if (angular.isObject(obj)) {
+                return angular.extend(obj, modelMethods);
+            } else {
+                return angular.extend({id: obj}, modelMethods)
+            }
+        });
+
+        restangular.extendCollection(path, function (collection) {
+            angular.forEach(collection, function (row) {
+                angular.extend(row, modelMethods);
+            });
+            return collection;
+        });
+
+        return modelMethods;
+    };
 
 
     module.factory('SGCurrency', ['Iso4217Restangular',  function(Iso4217Restangular) {
-
-        var url = 'currency';
-        var urlAlphabeticCode = 'currency/alphabeticCode';
-        var urlNumericCode = 'currency/numericCode';
-        var urlCount = 'currency/count';
-
-        var modelMethos = {
-            $new: function(id){
-                return angular.extend({id: id}, modelMethos);
-            },
-            $build: function(){
-                return angular.extend({id: undefined}, modelMethos, {$save: function(){
-                    return Iso4217Restangular.all(url).post(this);
-                }});
-            },
-            $save: function() {
-                return Iso4217Restangular.one(urlAlphabeticCode, this.alphabeticCode).customPUT(Iso4217Restangular.copy(this),'',{},{});
-            },
-
-            $saveByAlphabeticCode: function() {
-                return Iso4217Restangular.one(urlAlphabeticCode, this.alphabeticCode).customPUT(Iso4217Restangular.copy(this),'',{},{});
-            },
-            $saveByNumericCode: function() {
-                return Iso4217Restangular.one(urlNumericCode, this.numericCode).customPUT(Iso4217Restangular.copy(this),'',{},{});
-            },
-
-            $find: function(id){
-                return Iso4217Restangular.one(url, id).get();
-            },
-            $search: function(queryParams){
-                return Iso4217Restangular.all(url).getList(queryParams);
-            },
-            $findByAlphabeticCode: function(alphabeticCode){
-                return Iso4217Restangular.one(urlAlphabeticCode, alphabeticCode).get();
-            },
-            $findByNumericCode: function(numericCode){
-                return Iso4217Restangular.one(urlNumericCode, numericCode).get();
-            },
-
-            $count: function(){
-                return Iso4217Restangular.one(urlCount).get();
-            },
-
-            $disable: function(){
-                return Iso4217Restangular.all(url+'/'+this.id+'/disable').post();
-            },
-            $remove: function(id){
-                return Iso4217Restangular.one(url, id).remove();
-            },
-            $removeByAlphabeticCode: function(alphabeticCode){
-                return Iso4217Restangular.one(urlAlphabeticCode, alphabeticCode).remove();
-            },
-            $removeByNumericCode: function(id){
-                return Iso4217Restangular.one(urlNumericCode, id).remove();
-            },
-
-            $getDenominationsByAlphabeticCode: function(id){
-                return Iso4217Restangular.one(urlAlphabeticCode, id).all('denominations').getList();
-            },
-            $getDenominationsByNumericCode: function(id){
-                return Iso4217Restangular.one(urlNumericCode, id).all('denominations').getList();
-            }
-
-        };
-
-        Iso4217Restangular.extendModel(url, function(obj) {
-            return angular.extend(obj, modelMethos);
-        });
-        Iso4217Restangular.extendModel(urlAlphabeticCode, function(obj) {
-            return angular.extend(obj, modelMethos);
-        });
-        Iso4217Restangular.extendModel(urlNumericCode, function(obj) {
-            return angular.extend(obj, modelMethos);
-        });
-        Iso4217Restangular.extendModel(urlCount, function(obj) {
-            return angular.extend(obj, modelMethos);
-        });
-
-        return modelMethos;
-
+        var countryCodeResource = RestObject('currencies', Iso3166Restangular);
+        return countryCodeResource;
     }]);
 
 })();
