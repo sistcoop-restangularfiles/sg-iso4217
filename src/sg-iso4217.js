@@ -108,8 +108,18 @@
 
 
     module.factory('SGCurrency', ['Iso4217Restangular',  function(Iso4217Restangular) {
-        var countryCodeResource = RestObject('currencies', Iso3166Restangular);
-        return countryCodeResource;
+        var currencyResource = RestObject('currencies', Iso3166Restangular);
+
+        /**
+         * Transacciones boveda caja*
+         * */
+        currencyResource.SGDenomination = function () {
+            var extendMethods = {};
+            var denominationSubResource = RestObject(this.$concatSubResourcePath('denominations'), Iso4217Restangular, extendMethods);
+            return denominationSubResource;
+        };
+
+        return currencyResource;
     }]);
 
 })();
