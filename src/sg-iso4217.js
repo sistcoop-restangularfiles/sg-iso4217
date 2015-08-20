@@ -1,37 +1,43 @@
 'use strict';
 
-(function(){
+(function () {
 
     var module = angular.module('sg-iso4217', ['restangular']);
 
 
-    module.provider('sgIso4217', function() {
+    module.provider('sgIso4217', function () {
 
         this.restUrl = 'http://localhost';
 
-        this.$get = function() {
+        this.$get = function () {
             var restUrl = this.restUrl;
             return {
-                getRestUrl: function() {
+                getRestUrl: function () {
                     return restUrl;
                 }
             }
         };
 
-        this.setRestUrl = function(restUrl) {
+        this.setRestUrl = function (restUrl) {
             this.restUrl = restUrl;
         };
     });
 
 
-    module.factory('Iso4217Restangular', ['Restangular', 'sgIso4217', function(Restangular, sgIso4217) {
-        return Restangular.withConfig(function(RestangularConfigurer) {
+    module.factory('Iso4217Restangular', ['Restangular', 'sgIso4217', function (Restangular, sgIso4217) {
+        return Restangular.withConfig(function (RestangularConfigurer) {
             RestangularConfigurer.setBaseUrl(sgIso4217.getRestUrl());
         });
     }]);
 
     var RestObject = function (path, restangular, extendMethods) {
         var modelMethods = {
+
+            /**
+             * Retorna url*/
+            $getModelMethods: function () {
+                return modelMethods;
+            },
 
             /**
              * Retorna url*/
@@ -62,7 +68,7 @@
             },
 
             $search: function (queryParams) {
-                return restangular.all(path).get(queryParams);
+                return restangular.all(path).customGET('', queryParams);
             },
 
             $find: function (id) {
@@ -90,6 +96,11 @@
 
         restangular.extendModel(path, function (obj) {
             if (angular.isObject(obj)) {
+                if (angular.isDefined(obj.items) && angular.isArray(obj.items)) {
+                    angular.forEach(obj.items, function (row) {
+                        angular.extend(row, modelMethods);
+                    });
+                }
                 return angular.extend(obj, modelMethods);
             } else {
                 return angular.extend({id: obj}, modelMethods)
@@ -106,8 +117,7 @@
         return modelMethods;
     };
 
-
-    module.factory('SGCurrency', ['Iso4217Restangular',  function(Iso4217Restangular) {
+    module.factory('SGCurrency', ['Iso4217Restangular', function (Iso4217Restangular) {
         var currencyResource = RestObject('currencies', Iso4217Restangular);
 
         /**
